@@ -9,8 +9,6 @@ RUN yum update -y \
 COPY --from=semeru /opt/java /opt/java
 
 ADD Workshop_SharedCache /Workshop_SharedCache
-ADD Workshop_InstantOn /Workshop_InstantOn
-ADD Workshop_CloudCompiler /Workshop_CloudCompiler
 
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
