@@ -53,7 +53,7 @@ sudo ./main.run.sh
 
 ## 2. Gather baseline performance metrics using Liberty app
 
-In this section of the lab, we'll set up a Liberty container with the "Getting Started" application and take some rough measurements of the start-up time and memory usage for this container. In this section, we will be intentially not using the Semeru Runtimes Shared Classes Cache to get an idea what the baseline is (note that this is not the default Liberty configuration, which automatically prepopulates a shared classes cache; we'll be trying that out in Section_2).
+In this section of the lab, we'll set up a Liberty container with the "Getting Started" application and take some rough measurements of the start-up time and memory usage for this container. In this section, we will be intentially not using the Semeru Runtimes Shared Classes Cache to get an idea what the baseline is (note that this is not the default Liberty configuration, which automatically prepopulates a shared classes cache; we'll be trying that out in <b>Section_2</b>).
 
 First, go to the directory for Section 1:
 
@@ -86,7 +86,7 @@ Complete the following steps:
 4. Go to another terminal window and log into the workshop container. Run the following command in another terminal window:
 
 	```bash
-	$ podman exec --privileged -it workshop-main /bin/bash
+	podman exec --privileged -it workshop-main /bin/bash
 	```
 
 	This will connect to the running workshop container so that you can run another command there while the Liberty server is running.
@@ -104,13 +104,13 @@ Complete the following steps:
 	b814b591a1da  liberty_noscc      3.44%       131MB / 2.047GB    6.40%       0B / 0B     0B / 0B     60          9.040596s   33.61%
 	```
 
-	This shows the Liberty server you started in step 3 running with 137MB of memory. You can leave this podman stats command running for step 7; it will update the list of active containers about every 5 seconds.
+	This shows the Liberty server you started in Step 3 running with 131MB of memory. You can leave this podman stats command running for Step 7; it will update the list of active containers about every 5 seconds.
 
 	>**IMPORTANT**: Leave this `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
-6. Hit `control-C` to stop the server.
+6. Hit `control-c` to stop the server that you started in Step 3.
 
-7. **Optional**: Start and stop the server (step 3 and 6) a few times to get a feeling for how the startup time and memory consumption varies in different server instances.
+  	**Optional**: Start and stop the server (Step 3 and 6) a few times to get a feeling for how the startup time and memory consumption varies in different server instances.
 
 	You won't see exactly the same time and memory usage in different runs, but the server startup time usually falls within a few tenths of a second and the memory usage is typically within a few MB.
 
@@ -125,7 +125,7 @@ In this section of the lab, we'll be running the Liberty server in its default m
 First, go to the directory for Section 2:
 
 ```bash
-cd Section_2
+cd ../Section_2
 ```
 
 Complete the following steps:
@@ -156,15 +156,17 @@ Complete the following steps:
 
 	You should see something like:
 	
+	```
 	ID NAME CPU % MEM USAGE / LIMIT MEM % NET IO BLOCK IO PIDS CPU TIME AVG CPU % f6ecefd2dace liberty_scc 3.51% 97.9MB / 2.047GB 4.78% 0B / 0B 0B / 0B 59 4.626379s 15.75%
+	```
 
-	which shows the Liberty server you started in step 3 running with 98MB of memory. The memory use is lower because the shared memory used by the shared cache can be shared by multiple instances and so isn't counted as part of the memory use for the container. If you were to start a second, third, fourth, etc. server on the same machine connected to the same shared cache, there would be only one copy of the cache loaded in memory. Although it doesn't happen in this lab, it is pretty common in production deployments for multiple servers to be running on the same physical node so these savings are real even though completely subtracting it from the memory usage seems overboard especially with only one server running.
+	This shows the Liberty server you started in Step 3 running with 98MB of memory. The memory use is lower because the shared memory used by the shared cache can be shared by multiple instances and so isn't counted as part of the memory use for the container. If you were to start a second, third, fourth, etc. server on the same machine connected to the same shared cache, there would be only one copy of the cache loaded in memory. Although it doesn't happen in this lab, it is pretty common in production deployments for multiple servers to be running on the same physical node so these savings are real even though completely subtracting it from the memory usage seems overboard especially with only one server running.
 
->**IMPORTANT**: Leave the `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
+	>**IMPORTANT**: Leave the `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
-5. Hit `control-C` to stop the server.
-
-6. **Optional**: Start and stop the server (steps 3 and 5) a few times to get a feeling for how the startup time and memory consumption varies in different server instances.
+5. Hit `control-c` to stop the server that you started in Step 3. 
+   
+   **Optional**: Start and stop the server (Steps 3 and 5) a few times to get a feeling for how the startup time and memory consumption varies in different server instances.
 
 	You won't see exactly the same time and memory usage in different runs, but the server startup time usually falls within a few tenths of a second and the memory usage is typically within a few MB.
 
@@ -183,7 +185,7 @@ We'll be using Tomcat v10 to stay with Java 17 consistently through the rest of 
 First, go to the directory for Section 3:
 
 ```bash
-cd Section_3
+cd ../Section_3
 ```
 
 Complete the following steps:
@@ -211,11 +213,11 @@ Complete the following steps:
 	671f11639e46  tomcat_temurin     0.32%       67.28MB / 2.047GB  3.29%       0B / 0B          0B / 0B     31          1.25609s    7.83%
 	```
 
-	which shows the Tomcat server you started in step 2 running with 67MB of memory. Tomcat is a lightweight server but less capabilities are loaded here than into the Liberty server you started in Sections 1 and 2, which explains at least part of the different in memory usage.
+	which shows the Tomcat server you started in Step 2 running with 67MB of memory. Tomcat is a lightweight server but less capabilities are loaded here than into the Liberty server you started in Sections 1 and 2, which explains at least part of the different in memory usage.
 
 	>**IMPORTANT**: Leave the `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
-4. Press `Control-C` to stop the server. At this point, we can run the `startupTime.awk` script on the log to calculate the time it took from initiating the java command line from catalina.sh until the server posted its "Server started" message.
+4. Press `control-c` to stop the server that you started in Step 2. At this point, we can run the `startupTime.awk` script on the log to calculate the time it took from initiating the java command line from catalina.sh until the server posted its "Server started" message.
 
 	```bash
 	./startTime.awk log.cpu1
@@ -233,7 +235,7 @@ Complete the following steps:
 	podman run --cpus=2 --network=host --name=tomcat_temurin --replace -it tomcat_temurin > log.cpu2
 	```
 
-	**NOTE**: Hit `Control-C` after checking the memory consumption in the stats output.
+	**NOTE**: Hit `control-c` after checking the memory consumption in the stats output.
 
 	```bash
 	./startTime.awk log.cpu2
@@ -260,7 +262,7 @@ We'll be using Tomcat v10 to stay with Java 17 consistently through the entire l
 First, go to the directory for Section 4:
 
 ```bash
-cd Section_4
+cd ../Section_4
 ```
 
 Complete the following steps:
@@ -286,7 +288,7 @@ Complete the following steps:
 	ef1846553ffb  tomcat_semeru.noscc 41.53%     41.73MB / 2.047GB  2.04%       0B / 0B     0B / 0B     35          2.011569s   41.53%
 	```
 
-	This shows the Tomcat server you started in step 2 running with only 42MB of memory. Compared to starting Tomcat with Eclipse Temurin (with the HotSpot VM), when running this container uses about 40% less memory just by replacing the Temurin JDK with the Semeru Runtimes JDK.
+	This shows the Tomcat server you started in Step 2 running with only 42MB of memory. Compared to starting Tomcat with Eclipse Temurin (with the HotSpot VM), when running this container uses about 40% less memory just by replacing the Temurin JDK with the Semeru Runtimes JDK.
 
 	>**IMPORTANT**: Leave the `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
@@ -295,7 +297,7 @@ Complete the following steps:
 	But keep in mind this measurement is only after startup and does not necessarily mean that the server will continue to use less memory under load (although that has been the general finding). We can't really test under load with the sample application, though, so you'll have to investigate this aspect further on your own if you're interested.
 
 
-4. Press `control-C` to stop the server. Once you stop the server, you can run the `startTime.awk` script to find out how long it took to start the server. Let's see what that looks like:
+4. Press `control-c` to stop the server that you started in Step 2. Once you stop the server, you can run the `startTime.awk` script to find out how long it took to start the server. Let's see what that looks like:
 
 	```bash
 	./startTime.awk log.cpu1
@@ -305,7 +307,7 @@ Complete the following steps:
 
 	This message shows the server started in just under 2 seconds, which is really a LOT longer than with Temurin! Don't fear, however, this isn't the best Semeru Runtimes can do.
 
-5. Before we improve on that time, however, first start and stop the server a few times and use the `startTime.awk` script to see how reliable this start time is. You can also try running with 2 cores to see what that does: 
+6. Before we improve on that time, however, first start and stop the server a few times and use the `startTime.awk` script to see how reliable this start time is. You can also try running with 2 cores to see what that does: 
   
 	```bash
 	podman run --cpus=2 --network=host --name=tomcat_semeru.noscc --replace -it tomcat_semeru.noscc > log.cpu2
@@ -319,9 +321,9 @@ Complete the following steps:
 
 	So not much change in memory usage, at least. How about the start time? 
 		```bash
-	./startTime.awk log.cpu2
-	Server initiated 1715357245252879360, up at 1715357246401000000 Full start time is 1148.12 ms
-	```
+		./startTime.awk log.cpu2
+		Server initiated 1715357245252879360, up at 1715357246401000000 Full start time is 1148.12 ms
+		```
 
 	Well, it improved dramatically, as you'd expect, and it's not as much behind Temurin as it was on one core. But it's still very far behind. Don't give up yet! In the next section, Semeru Runtimes will improve dramatically!
 
@@ -346,7 +348,7 @@ For consistency, we'll be using Tomcat v10 and Java 17 through the entire lab.
 First, goto the direction for Section 5:
 
 ```bash
-cd Section_5
+cd ../Section_5
 ```
 
 Complete the following steps:
@@ -375,9 +377,9 @@ Complete the following steps:
 	e564779194b2  tomcat_semeru.scc  0.57%       39.33MB / 2.047GB  1.92%       0B / 0B     8.192kB / 0B  35          5.275247s   45.62%
 	```
 
-	As you can see, IBM Semeru Runtimes runs in even less memory than earlier (39MB versus the 42MB we saw earlier in `Section_4`). That's not as dramatic an improvement as we saw with the Liberty server, but let's ignore that fact for now. With this new memory footprint baseline, the Temurin JDK with the HotSpot JVM consumes 75% more memory to start the server.
+	As you can see, IBM Semeru Runtimes runs in even less memory than earlier (39MB versus the 42MB we saw earlier in <b>Section_4</b>). That's not as dramatic an improvement as we saw with the Liberty server, but let's ignore that fact for now. With this new memory footprint baseline, the Temurin JDK with the HotSpot JVM consumes 75% more memory to start the server.
 
-5. Press `control-C` to stop the server. Once you stop the server, we can check the start time using the `startTime.awk` script:
+5. Press `control-c` to stop the server that you started in Step 2. Once you stop the server, we can check the start time using the `startTime.awk` script:
 	```bash
 	./startTime.awk log.cpu1
 	Server initiated 1715357831549004032, up at 1715357834783000000
@@ -436,7 +438,7 @@ Complete the following steps:
 
 ### Summary
 
-This is the last section of this part of the workshop, so you can stop the podman stats command running in the other terminal window at this point by hitting `control-C` that window.
+This is the last section of this part of the lab, so you can stop the podman stats command running in the other terminal window at this point by hitting `control-c` in that window.
 
 In this section, we initially found very poor results due to a fairly common mistake activating the shared cache technology in Semeru Runtimes that seemed to paint a very dim picture. But when we properly configured the shared classes cache and prepopulated the cache in the container build step, we saw dramatically better startup and memory use with Semeru Runtimes. When running with a single CPU core, we found that compared to using Semeru Runtimes, the Temurin JDK will consume 88% more memory (68MB versus 36MB) and will start 94% slower (1152ms versus 593ms).
 
