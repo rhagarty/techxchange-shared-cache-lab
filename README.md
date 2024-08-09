@@ -25,7 +25,7 @@ server to measure the startup and memory use for both the [Eclipse Temurin JDK](
 		- [Summary](#summary-3)
 	- [6. Use Semeru Runtimes shared classes to improve startup time](#6-use-semeru-runtimes-shared-classes-to-improve-startup-time)
 		- [Summary](#summary-4)
-		- [Conclusion](#conclusion)
+	- [Conclusion](#conclusion)
 
 ## 1. Initial lab setup
 
@@ -34,6 +34,7 @@ We will run the entire lab out of one redhat/ubi9 container that preinstalls the
 To create the lab container, run the following command:
 
 ```bash
+cd LabSharedCache/techxchange-shared-cache-lab
 ./main.build.sh
 ```
 
@@ -57,7 +58,7 @@ In this section of the lab, we'll set up a Liberty container with the "Getting S
 First, go to the directory for Section 1:
 
 ```bash
-cd Section_1
+cd /Workshop_SharedCache/Section_1
 ```
 
 Complete the following steps:
@@ -453,6 +454,6 @@ Semeru SCC 2 cores 1624.24ms 39MB
 Semeru Prepop SCC 2 cores 448ms 36MB
 ```
 
-### Conclusion
+## Conclusion
 
 We hope you enjoyed this workshop and learned more about how startup time and memory usage can be dramatically different depending on which JDK you use to deploy your Java workloads. You have also seen the most common misconfiguration of Semeru Runtimes's shared cache technology that results in much slower start-up times that may lead developers to the wrong conclusions about the worth of this technology. In the end, properly configuring the shared class cache technology, particularly when using containers, can led to dramatic savings in both start time and memory use. Faster start time means you can provide a more responsive and elastic infrastucture, whereas lower memory usage can translate into smaller VMs which cost less money.
