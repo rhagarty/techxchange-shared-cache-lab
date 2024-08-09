@@ -2,9 +2,9 @@
 
 In this lab, you will learn the benefits of shared classes case technology and how using Semeru Runtimes can help you run workloads that start 50% faster and consume 50% less memory.
 
-This workshop is divided into 5 sections that each explore a different topic.
+This lab is divided into 5 sections that each explore a different topic.
 
-The first two sections look at using the OpenLiberty web server with Semeru
+The first two sections look at using the Open Liberty web server with Semeru
 Runtimes to see the impact of using shared class cache or not.
 
 The following three sections switch gears to look at the Apache Tomcat v10
@@ -15,15 +15,15 @@ server to measure the startup and memory use for both the [Eclipse Temurin JDK](
 - [Hands-on Shared Classes Cache Lab](#hands-on-shared-classes-cache-lab)
 - [Steps:](#steps)
 	- [1. Initial lab setup](#1-initial-lab-setup)
-	- [2. Gather baseline performance metrics using Liberty app](#2-gather-baseline-performance-metrics-using-liberty-app)
+	- [2. Open Liberty without Shared Classes Cache](#2-open-liberty-without-shared-classes-cache)
 		- [Summary](#summary)
-	- [3. Verify performance gains with Semeru Runtimes shared classes](#3-verify-performance-gains-with-semeru-runtimes-shared-classes)
+	- [3. Open Liberty with Shared Classes Cache](#3-open-liberty-with-shared-classes-cache)
 		- [Summary](#summary-1)
-	- [4. Gather baseline performance metrics using Temurin JDK and Tomcat](#4-gather-baseline-performance-metrics-using-temurin-jdk-and-tomcat)
+	- [4. Apache Tomcat with Eclipse Temurin JDK](#4-apache-tomcat-with-eclipse-temurin-jdk)
 		- [Summary](#summary-2)
-	- [5. Use Semeru Runtimes to improve memory usage](#5-use-semeru-runtimes-to-improve-memory-usage)
+	- [5. Apache Tomcat with IBM Semeru Runtimes](#5-apache-tomcat-with-ibm-semeru-runtimes)
 		- [Summary](#summary-3)
-	- [6. Use Semeru Runtimes shared classes to improve startup time](#6-use-semeru-runtimes-shared-classes-to-improve-startup-time)
+	- [6. Apache Tomcat with IBM Semeru Runtimes and Shared Classes Cache](#6-apache-tomcat-with-ibm-semeru-runtimes-and-shared-classes-cache)
 		- [Summary](#summary-4)
 	- [Conclusion](#conclusion)
 
@@ -31,7 +31,7 @@ server to measure the startup and memory use for both the [Eclipse Temurin JDK](
 
 We will run the entire lab out of one redhat/ubi9 container that preinstalls the required software.
 
-To create the lab container, run the following command:
+To create the workshop container, run the following command:
 
 ```bash
 cd LabSharedCache/techxchange-shared-cache-lab
@@ -51,7 +51,7 @@ sudo ./main.run.sh
 >podman run --network=host --privileged --name=workshop-main --replace -it workshop/main /bin/bash
 >```
 
-## 2. Gather baseline performance metrics using Liberty app
+## 2. Open Liberty without Shared Classes Cache
 
 In this section of the lab, we'll set up a Liberty container with the "Getting Started" application and take some rough measurements of the start-up time and memory usage for this container. In this section, we will be intentially not using the Semeru Runtimes Shared Classes Cache to get an idea what the baseline is (note that this is not the default Liberty configuration, which automatically prepopulates a shared classes cache; we'll be trying that out in <b>Section_2</b>).
 
@@ -116,9 +116,9 @@ Complete the following steps:
 
 ### Summary
 
-This completes this part of the lab! Move on to the next Section to see how fast OpenLiberty will load this application when the shared cache has been created!
+This completes this part of the lab! Move on to the next Section to see how fast Open Liberty will load this application when the shared cache has been created!
 
-## 3. Verify performance gains with Semeru Runtimes shared classes
+## 3. Open Liberty with Shared Classes Cache
 
 In this section of the lab, we'll be running the Liberty server in its default mode to run the Getting Started application. We'll find that the server starts much faster (in a little more than half the time) and can use less memory because the shared classes cache does not need to remain resident.
 
@@ -174,11 +174,11 @@ Complete the following steps:
 
 This completes the second section in the lab! Move on to the next section to see if we can use the Semeru Runtimes Shared Classes Cache to help another server to start faster!
 
-## 4. Gather baseline performance metrics using Temurin JDK and Tomcat
+## 4. Apache Tomcat with Eclipse Temurin JDK
 
-In this section of the workshop, we're going to establish the baseline startup time and memory usage for a different server technology: Apache Tomcat. We're also going to switch temporary away from IBM Semeru Runtimes to get a feel for how performance varies with different JDKs.
+In this section of the lab, we're going to establish the baseline startup time and memory usage for a different server technology: Apache Tomcat. We're also going to switch temporary away from IBM Semeru Runtimes to get a feel for how performance varies with different JDKs.
 
-We'll be running a different application than the "Getting Started" application used in <b>Section_1</b> and <b>Section_2</b>, and tomcat does not include all the same kinds of support that the Liberty server does. For these reasons, and because tomcat is an extremely lightweight server, we'll see it will start a bit faster than Liberty and it will be using less memory after startup. In later sections of the workshop, we'll further improve on these numbers by using IBM Semeru Runtimes and its shared classes cache technology.
+We'll be running a different application than the "Getting Started" application used in <b>Section_1</b> and <b>Section_2</b>, and tomcat does not include all the same kinds of support that the Liberty server does. For these reasons, and because tomcat is an extremely lightweight server, we'll see it will start a bit faster than Liberty and it will be using less memory after startup. In later sections of the lab, we'll further improve on these numbers by using IBM Semeru Runtimes and its shared classes cache technology.
 
 We'll be using Tomcat v10 to stay with Java 17 consistently through the rest of the labs.
 
@@ -227,7 +227,7 @@ Complete the following steps:
 
 	So the server started in roughly 1.15 seconds.
 
-	You can start the server a few more times, capturing the output to different log files so that you can get the start time for several runs, just to see the variation you experience. We aren't going to do a rigourous statistical analysis for this workshop but that would obviously be important if you were going to start measuring server start time for your production workloads.
+	You can start the server a few more times, capturing the output to different log files so that you can get the start time for several runs, just to see the variation you experience. We aren't going to do a rigourous statistical analysis for this lab but that would obviously be important if you were going to start measuring server start time for your production workloads.
 
 	You can also run with more cores just to see how the start time changes. For example:
 
@@ -253,7 +253,7 @@ JDK Core limit Start time Memory usage after start Temurin 1 core 1152.47ms 68MB
 
 Move on to the next section to see what happens when we move to an IBM Semeru Runtimes JDK to run the Tomcat server with the same sample application.
 
-## 5. Use Semeru Runtimes to improve memory usage
+## 5. Apache Tomcat with IBM Semeru Runtimes
 
 In this section of the lab, we're going to try running Apache Tomcat with a different JDK (IBM Semeru Runtimes) than the Eclipse Temurin JDK that comes pre-installed. We have a small challenge: Tomcat comes in a container and Semeru Runtimes also comes in a container. To resolve this dilemma, our Dockerfile will use a multi-stage build to copy the JDK from the Semeru Runtimes container into our new container that will be based on (FROM) the Tomcat container.
 
@@ -339,9 +339,9 @@ Temurin 2 cores 633.684ms 73MB Semeru NOSCC 2 cores 1148.12ms 42MB
 
 Move on to the next section to see what happens when we activate the Shared Classes Cache in IBM Semeru Runtimes and run the Tomcat server with the same sample application. You should see this picture reverse!
 
-## 6. Use Semeru Runtimes shared classes to improve startup time
+## 6. Apache Tomcat with IBM Semeru Runtimes and Shared Classes Cache
 
-In this section of the workshop, we're going to try to use the Semeru Runtimes shared classes cache technology to accelerate the less than inspiring startup times we saw in the last section when we tried to start the Tomcat server with IBM Semeru Runtimes.
+In this section of the lab, we're going to try to use the Semeru Runtimes shared classes cache technology to accelerate the less than inspiring startup times we saw in the last section when we tried to start the Tomcat server with IBM Semeru Runtimes.
 
 For consistency, we'll be using Tomcat v10 and Java 17 through the entire lab.
 
@@ -390,7 +390,7 @@ Complete the following steps:
 
 6. Do a few runs to confirm your finding and that it's not just a fluke. You may see some variation because the times are much longer, but you should find the times are consistently large to a wildly unexpected degree.
 
-	>**Sidebar**: Ask yourself what you would do at this point if had gone through this exercise outside of this workshop on your own. Maybe this kind of result has even happened to you already. Would you continue to try to understand why the startup time got worse? Or would you give up, assuming that Semeru Runtimes reputation for fast startup is probably exaggerated or undeserved?
+	>**Sidebar**: Ask yourself what you would do at this point if had gone through this exercise outside of this lab on your own. Maybe this kind of result has even happened to you already. Would you continue to try to understand why the startup time got worse? Or would you give up, assuming that Semeru Runtimes reputation for fast startup is probably exaggerated or undeserved?
 
 7. I'm afraid you've been set up. Let's consider how the shared cache technology works. In order to have fast startup time, you need a cache to help you go faster. That means you need to do one "cold" run to populate the cache with classes and compiled code. This "cold" run is expected to run more slowly because its purpose is to generate a high quality cache that will enable subsequent "warm" runs to start as quickly as possible. In fact, the Eclipse OpenJ9 JVM employs very different compilation heuristics in this cold run compared to even a normal run that doesn't use the shared classes cache, and that's why the start time you saw in Step 5 was even longer than the times we measured in the previous section when we weren't using the shared classes cache.
 
@@ -458,4 +458,4 @@ Semeru Prepop SCC 2 cores 448ms 36MB
 
 ## Conclusion
 
-We hope you enjoyed this workshop and learned more about how startup time and memory usage can be dramatically different depending on which JDK you use to deploy your Java workloads. You have also seen the most common misconfiguration of Semeru Runtimes's shared cache technology that results in much slower start-up times that may lead developers to the wrong conclusions about the worth of this technology. In the end, properly configuring the shared class cache technology, particularly when using containers, can led to dramatic savings in both start time and memory use. Faster start time means you can provide a more responsive and elastic infrastucture, whereas lower memory usage can translate into smaller VMs which cost less money.
+We hope you enjoyed this lab and learned more about how startup time and memory usage can be dramatically different depending on which JDK you use to deploy your Java workloads. You have also seen the most common misconfiguration of Semeru Runtimes's shared cache technology that results in much slower start-up times that may lead developers to the wrong conclusions about the worth of this technology. In the end, properly configuring the shared class cache technology, particularly when using containers, can led to dramatic savings in both start time and memory use. Faster start time means you can provide a more responsive and elastic infrastucture, whereas lower memory usage can translate into smaller VMs which cost less money.
