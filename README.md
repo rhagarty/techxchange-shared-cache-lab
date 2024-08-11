@@ -51,6 +51,12 @@ sudo ./main.run.sh
 >podman run --network=host --privileged --name=workshop-main --replace -it workshop/main /bin/bash
 >```
 
+Once started, the `workshop-main` container should be listed when you perform the following command from a separate terminal window:
+
+```bash
+podman ps -a
+```
+
 ## 2. Open Liberty without Shared Classes Cache
 
 In this section of the lab, we'll set up a Liberty container with the "Getting Started" application and take some rough measurements of the start-up time and memory usage for this container. In this section, we will be intentially not using the Semeru Runtimes Shared Classes Cache to get an idea what the baseline is (note that this is not the default Liberty configuration, which automatically prepopulates a shared classes cache; we'll be trying that out in <b>Section_2</b>).
@@ -221,6 +227,10 @@ Complete the following steps:
 
 	```bash
 	./startTime.awk log.cpu1
+	```
+
+	Which should return a value similar to this:
+	```bash
 	Server initiated 1715355700320533504, up at 1715355701473000000
 	Full start time is 1152.47 ms
 	```
@@ -239,6 +249,10 @@ Complete the following steps:
 
 	```bash
 	./startTime.awk log.cpu2
+	```
+
+	Which should return a value similar to this:
+	```bash
 	Server initiated 1715356179088315648, up at 1715356179722000000
 	Full start time is 633.684 ms
 	```
@@ -301,6 +315,10 @@ Complete the following steps:
 
 	```bash
 	./startTime.awk log.cpu1
+	```
+
+	Which should return a value similar to this:
+	```bash
 	Server initiated 1715356585620868352, up at 1715356587598000000
 	Full start time is 1977.13 ms
 	```
@@ -320,10 +338,15 @@ Complete the following steps:
 	```
 
 	So not much change in memory usage, at least. How about the start time? 
-		```bash
-		./startTime.awk log.cpu2
-		Server initiated 1715357245252879360, up at 1715357246401000000 Full start time is 1148.12 ms
-		```
+		
+	```bash
+	./startTime.awk log.cpu2
+	```
+
+	Which should return a value similar to this:
+	```bash
+	Server initiated 1715357245252879360, up at 1715357246401000000 Full start time is 1148.12 ms
+	```
 
 	Well, it improved dramatically, as you'd expect, and it's not as much behind Temurin as it was on one core. But it's still very far behind. Don't give up yet! In the next section, Semeru Runtimes will improve dramatically!
 
@@ -382,6 +405,10 @@ Complete the following steps:
 5. Press `control-c` to stop the server that you started in Step 2. Once you stop the server, we can check the start time using the `startTime.awk` script:
 	```bash
 	./startTime.awk log.cpu1
+	```
+
+	Which should return a value similar to this:
+	```bash
 	Server initiated 1715357831549004032, up at 1715357834783000000
 	Full start time is 3234 ms
 	```
@@ -417,7 +444,13 @@ Complete the following steps:
 
 	And if we look at the start time: 
 	```bash
-	./startTime.awk log.prepop.cpu1 Server initiated 1715359356618435584, up at 1715359357211000000 Full start time is 592.564 ms
+	./startTime.awk log.prepop.cpu1 
+	```
+
+	Which should return a value similar to this:
+	```bash
+	Server initiated 1715359356618435584, up at 1715359357211000000 
+	Full start time is 592.564 ms
 	```
 
 	Now that's more like it! You can do the same runs with 2 cores: 
@@ -433,12 +466,14 @@ Complete the following steps:
 	With even faster start time (under half a second!): 
 	
 	```bash
-	./startTime.awk log.prepop.cpu2 Server initiated 1715359654960000256, up at 1715359655408000000 Full start time is 448 ms
+	./startTime.awk log.prepop.cpu2 
+	Server initiated 1715359654960000256, up at 1715359655408000000 
+	Full start time is 448 ms
 	```
 
 ### Summary
 
-This is the last section of this part of the lab, so you can stop the podman stats command running in the other terminal window at this point by hitting `control-c` in that window.
+This is the last section of this part of the lab, so you can stop the podman stats command running in the other terminal window at this point by hitting `control-c` in that window. You can also exit the workshop container by typing `exit` in all container terminal windows.
 
 In this section, we initially found very poor results due to a fairly common mistake activating the shared cache technology in Semeru Runtimes that seemed to paint a very dim picture. But when we properly configured the shared classes cache and prepopulated the cache in the container build step, we saw dramatically better startup and memory use with Semeru Runtimes. When running with a single CPU core, we found that compared to using Semeru Runtimes, the Temurin JDK will consume 88% more memory (68MB versus 36MB) and will start 94% slower (1152ms versus 593ms).
 
