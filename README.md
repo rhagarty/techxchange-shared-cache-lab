@@ -10,78 +10,98 @@ Runtimes to see the impact of using shared class cache or not.
 The following three sections switch gears to look at the Apache Tomcat v10
 server to measure the startup and memory use for both the [Eclipse Temurin JDK](https://adoptium.net/temurin/) - which is the JDK used in the official [Tomcat containers](`https://hub.docker.com/_/tomcat`), as well as the IBM Semeru Runtimes JDK.
 
-# Steps:
-
-- [Hands-on Shared Classes Cache Lab](#hands-on-shared-classes-cache-lab)
-- [Steps:](#steps)
-	- [1. Initial lab setup](#1-initial-lab-setup)
-	- [2. Open Liberty without Shared Classes Cache](#2-open-liberty-without-shared-classes-cache)
-		- [Summary](#summary)
-	- [3. Open Liberty with Shared Classes Cache](#3-open-liberty-with-shared-classes-cache)
-		- [Summary](#summary-1)
-	- [4. Apache Tomcat with Eclipse Temurin JDK](#4-apache-tomcat-with-eclipse-temurin-jdk)
-		- [Summary](#summary-2)
-	- [5. Apache Tomcat with IBM Semeru Runtimes](#5-apache-tomcat-with-ibm-semeru-runtimes)
-		- [Summary](#summary-3)
-	- [6. Apache Tomcat with IBM Semeru Runtimes and Shared Classes Cache](#6-apache-tomcat-with-ibm-semeru-runtimes-and-shared-classes-cache)
-		- [Summary](#summary-4)
-	- [Conclusion](#conclusion)
-
-## 1. Initial lab setup
-
-We will run the entire lab out of one redhat/ubi9 container that preinstalls the required software.
-
-To create the workshop container, run the following command:
-
-```bash
-cd LabSharedCache/techxchange-shared-cache-lab
-./main.build.sh
-```
+## Initial lab setup
 
 Although it's not recommended as common practice, this lab will run more
-smoothly for you if you invoke it as root. The safest way to do that is by
-running a command like this one so that you can't accidentally leave a terminal window on your host with root permission lying around:
+smoothly for you if you invoke it as root. Login as root using the password provided in the Lab Guide:
 
 ```bash
-sudo ./main.run.sh
+su --login root
+```
+
+Set the current directory to the lab:
+```bash
+cd /home/ibmuser/LabSharedCache/techxchange-share-cache-lab
+```
+
+We will run the entire lab out of one redhat/ubi9 container that preinstalls the required software. In an effort to save time, we have built the container image for you (using the command `./main.build.sh`). You can verify this by running the following command:
+
+```bash
+podman images
+```
+
+Which should list the image - `localhost/workshop/main`.
+
+> **WARNING**: Do not remove or delete this image. It will be needed to complete all of the sections within this lab. 
+
+Run the `workshop/main` image in a new container:
+
+```bash
+./main.run.sh
 ```
 
 > **NOTE**: You can peek inside that script to see that it just runs the following command:
 >```bash
 >podman run --network=host --privileged --name=workshop-main --replace -it workshop/main /bin/bash
 >```
+> This runs the image `workshop/main` in a brand new container named `workshop-main`. If that container already exists, it will delete and replace it. It will run in the host's network, and `-it` means a terminal with prompt will be created and run when the container is up and running.
 
-Once started, the `workshop-main` container should be listed when you perform the following command from a separate terminal window:
+If all goes right, you should be running within the container. You should notice a new prompt.
 
 ```bash
-podman ps -a
+[root@student /]#
 ```
 
-## 2. Open Liberty without Shared Classes Cache
+Your current directory will be set to the root directory of the container. To get to the lab contents, type the command:
+
+```bash
+cd Workshop_SharedCache
+```
+
+Note that your current terminal is now dedicated to running inside of a container, and will do so until you type `exit`. In the following steps, you may be asked to type commands outside of the container. In this case, you will need to open up a new terminal window.
+
+# Steps:
+
+- [Hands-on Shared Classes Cache Lab](#hands-on-shared-classes-cache-lab)
+	- [Initial lab setup](#initial-lab-setup)
+- [Steps:](#steps)
+	- [Section\_1: Open Liberty without Shared Classes Cache](#section_1-open-liberty-without-shared-classes-cache)
+		- [Summary](#summary)
+	- [Section\_2: Open Liberty with Shared Classes Cache](#section_2-open-liberty-with-shared-classes-cache)
+		- [Summary](#summary-1)
+	- [Section\_3: Apache Tomcat with Eclipse Temurin JDK](#section_3-apache-tomcat-with-eclipse-temurin-jdk)
+		- [Summary](#summary-2)
+	- [Section\_4: Apache Tomcat with IBM Semeru Runtimes (without Shared Classes Cache)](#section_4-apache-tomcat-with-ibm-semeru-runtimes-without-shared-classes-cache)
+		- [Summary](#summary-3)
+	- [Section\_5: Apache Tomcat with IBM Semeru Runtimes and Shared Classes Cache](#section_5-apache-tomcat-with-ibm-semeru-runtimes-and-shared-classes-cache)
+		- [Summary](#summary-4)
+	- [Conclusion](#conclusion)
+
+## Section_1: Open Liberty without Shared Classes Cache
 
 In this section of the lab, we'll set up a Liberty container with the "Getting Started" application and take some rough measurements of the start-up time and memory usage for this container. In this section, we will be intentially not using the Semeru Runtimes Shared Classes Cache to get an idea what the baseline is (note that this is not the default Liberty configuration, which automatically prepopulates a shared classes cache; we'll be trying that out in <b>Section_2</b>).
 
 First, go to the directory for Section 1:
 
 ```bash
-cd /Workshop_SharedCache/Section_1
+cd Section_1
 ```
 
 Complete the following steps:
 
-1. Build the getting started application in this directory:
+1. Build the "Getting Started" application in this directory:
 
 	```bash
 	mvn package
 	```
 
-2. Build an OpenLiberty container that contains the getting started application. There is a `Dockerfile.liberty_noscc` file provided that specifically disables the Semeru Runtimes shared classes cache when this container is built. Run the following command:
+2. Build an OpenLiberty container that contains the "Getting Started" application. There is a `Dockerfile.liberty_noscc` file provided that specifically disables the Semeru Runtimes shared classes cache when this container is built. Run the following command:
 
 	```bash
 	podman build --network=host -f Dockerfile.liberty_noscc -t liberty_noscc .
 	```
 
-3. Run the container. It will automatically start the OpenLiberty server with the loaded getting started application. Run the following commadn and wait for the server to start:
+3. Run the container. It will automatically start the OpenLiberty server with the loaded "Getting Started" application. Run the following command and wait for the server to start:
 
 	```bash
 	podman run -p 9080:9080 --name=liberty_noscc --replace -it liberty_noscc
@@ -114,7 +134,7 @@ Complete the following steps:
 
 	>**IMPORTANT**: Leave this `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
-6. Hit `control-c` to stop the server that you started in Step 3.
+6. Return to the workshop container and hit `control-c` to stop the server that you started in Step 3.
 
   	**Optional**: Start and stop the server (Step 3 and 6) a few times to get a feeling for how the startup time and memory consumption varies in different server instances.
 
@@ -124,9 +144,9 @@ Complete the following steps:
 
 This completes this part of the lab! Move on to the next Section to see how fast Open Liberty will load this application when the shared cache has been created!
 
-## 3. Open Liberty with Shared Classes Cache
+## Section_2: Open Liberty with Shared Classes Cache
 
-In this section of the lab, we'll be running the Liberty server in its default mode to run the Getting Started application. We'll find that the server starts much faster (in a little more than half the time) and can use less memory because the shared classes cache does not need to remain resident.
+In this section of the lab, we'll be running the Liberty server in its default mode to run the "Getting Started" application. We'll find that the server starts much faster (in a little more than half the time) and can use less memory because not all parts of the shared classes cache needs to remain resident (unreferenced parts are removed from physical memory).
 
 First, go to the directory for Section 2:
 
@@ -136,19 +156,19 @@ cd ../Section_2
 
 Complete the following steps:
 
-1. Build the getting started application in this directory:
+1. Build the "Getting Started" application in this directory:
 
 	```bash
 	mvn package
 	```
 
-2. Build an OpenLiberty container that contains the getting started application. There is a `Dockerfile.liberty_scc` file provided that enables and populates the Semeru Runtimes shared classes cache automatically when this container is built. Run the following command:
+2. Build an OpenLiberty container that contains the "Getting Started" application. There is a `Dockerfile.liberty_scc` file provided that enables and populates the Semeru Runtimes shared classes cache automatically when this container is built. Run the following command:
 
 	```bash
 	podman build --network=host -f Dockerfile.liberty_scc -t liberty_scc .
 	```
 
-3. Run the container. It will automatically start the OpenLiberty server with the loaded getting started application. Run the following command and wait for the server to start:
+3. Run the container. It will automatically start the OpenLiberty server with the loaded "Getting Started" application. Run the following command and wait for the server to start:
 
 	```bash
 	podman run --network=host --name=liberty_scc --replace -it liberty_scc
@@ -180,9 +200,9 @@ Complete the following steps:
 
 This completes the second section in the lab! Move on to the next section to see if we can use the Semeru Runtimes Shared Classes Cache to help another server to start faster!
 
-## 4. Apache Tomcat with Eclipse Temurin JDK
+## Section_3: Apache Tomcat with Eclipse Temurin JDK
 
-In this section of the lab, we're going to establish the baseline startup time and memory usage for a different server technology: Apache Tomcat. We're also going to switch temporary away from IBM Semeru Runtimes to get a feel for how performance varies with different JDKs.
+In this section of the lab, we're going to establish the baseline startup time and memory usage for a different server technology: Apache Tomcat. We're also going to switch temporarily away from IBM Semeru Runtimes to get a feel for how performance varies with different JDKs.
 
 We'll be running a different application than the "Getting Started" application used in <b>Section_1</b> and <b>Section_2</b>, and tomcat does not include all the same kinds of support that the Liberty server does. For these reasons, and because tomcat is an extremely lightweight server, we'll see it will start a bit faster than Liberty and it will be using less memory after startup. In later sections of the lab, we'll further improve on these numbers by using IBM Semeru Runtimes and its shared classes cache technology.
 
@@ -223,7 +243,7 @@ Complete the following steps:
 
 	>**IMPORTANT**: Leave the `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
-4. Press `control-c` to stop the server that you started in Step 2. At this point, we can run the `startupTime.awk` script on the log to calculate the time it took from initiating the java command line from catalina.sh until the server posted its "Server started" message.
+4. Hit `control-c` to stop the server that you started in Step 2. At this point, we can run the `startupTime.awk` script on the log to calculate the time it took from initiating the java command line from catalina.sh until the server posted its "Server started" message.
 
 	```bash
 	./startTime.awk log.cpu1
@@ -263,11 +283,15 @@ Complete the following steps:
 
 You should have measured performance somewhat along these lines:
 
-JDK Core limit Start time Memory usage after start Temurin 1 core 1152.47ms 68MB Temurin 2 cores 633.684ms 73MB
+```
+JDK Core limit Start time Memory usage after start: 
+Temurin 1 core 1152.47ms 68MB 
+Temurin 2 cores 633.684ms 73MB
+```
 
 Move on to the next section to see what happens when we move to an IBM Semeru Runtimes JDK to run the Tomcat server with the same sample application.
 
-## 5. Apache Tomcat with IBM Semeru Runtimes
+## Section_4: Apache Tomcat with IBM Semeru Runtimes (without Shared Classes Cache)
 
 In this section of the lab, we're going to try running Apache Tomcat with a different JDK (IBM Semeru Runtimes) than the Eclipse Temurin JDK that comes pre-installed. We have a small challenge: Tomcat comes in a container and Semeru Runtimes also comes in a container. To resolve this dilemma, our Dockerfile will use a multi-stage build to copy the JDK from the Semeru Runtimes container into our new container that will be based on (FROM) the Tomcat container.
 
@@ -311,7 +335,7 @@ Complete the following steps:
 	But keep in mind this measurement is only after startup and does not necessarily mean that the server will continue to use less memory under load (although that has been the general finding). We can't really test under load with the sample application, though, so you'll have to investigate this aspect further on your own if you're interested.
 
 
-4. Press `control-c` to stop the server that you started in Step 2. Once you stop the server, you can run the `startTime.awk` script to find out how long it took to start the server. Let's see what that looks like:
+4. Hit `control-c` to stop the server that you started in Step 2. Once you stop the server, you can run the `startTime.awk` script to find out how long it took to start the server. Let's see what that looks like:
 
 	```bash
 	./startTime.awk log.cpu1
@@ -352,9 +376,9 @@ Complete the following steps:
 
 ### Summary
 
-In this section we added performance results like these:
+In this section we saw performance results like these:
 
-```bash
+```
 JDK Core limit Start time Memory usage after start:
 Temurin 1 core 1152.47ms 68MB Semeru NOSCC 1 core 1977.13ms 42MB
 Temurin 2 cores 633.684ms 73MB Semeru NOSCC 2 cores 1148.12ms 42MB
@@ -362,7 +386,7 @@ Temurin 2 cores 633.684ms 73MB Semeru NOSCC 2 cores 1148.12ms 42MB
 
 Move on to the next section to see what happens when we activate the Shared Classes Cache in IBM Semeru Runtimes and run the Tomcat server with the same sample application. You should see this picture reverse!
 
-## 6. Apache Tomcat with IBM Semeru Runtimes and Shared Classes Cache
+## Section_5: Apache Tomcat with IBM Semeru Runtimes and Shared Classes Cache
 
 In this section of the lab, we're going to try to use the Semeru Runtimes shared classes cache technology to accelerate the less than inspiring startup times we saw in the last section when we tried to start the Tomcat server with IBM Semeru Runtimes.
 
@@ -402,7 +426,7 @@ Complete the following steps:
 
 	As you can see, IBM Semeru Runtimes runs in even less memory than earlier (39MB versus the 42MB we saw earlier in <b>Section_4</b>). That's not as dramatic an improvement as we saw with the Liberty server, but let's ignore that fact for now. With this new memory footprint baseline, the Temurin JDK with the HotSpot JVM consumes 75% more memory to start the server.
 
-5. Press `control-c` to stop the server that you started in Step 2. Once you stop the server, we can check the start time using the `startTime.awk` script:
+5. Hit `control-c` to stop the server that you started in Step 2. Once you stop the server, we can check the start time using the `startTime.awk` script:
 	```bash
 	./startTime.awk log.cpu1
 	```
@@ -442,7 +466,7 @@ Complete the following steps:
 	3e4994b07276  tomcat_semeru.prepop_scc  0.84%   35.94MB / 2.047GB  1.76%       0B / 0B     8.192kB / 0B  35        719.773ms   5.87%
 	```
 
-	And if we look at the start time: 
+	Hit `control-c` to stop the server that you just started. Once you stop the server, we can check the start time using the `startTime.awk` script: 
 	```bash
 	./startTime.awk log.prepop.cpu1 
 	```
@@ -463,10 +487,12 @@ Complete the following steps:
 	ID NAME CPU % MEM USAGE / LIMIT MEM % NET IO BLOCK IO PIDS CPU TIME AVG CPU % 3adfe1f7ded9 tomcat_semeru.prepop_scc 0.97% 35.91MB / 2.047GB 1.75% 0B / 0B 0B / 0B 36 718.876ms 6.49%
 	```
 
-	With even faster start time (under half a second!): 
-	
+	Now lets see if we have improved:	
 	```bash
-	./startTime.awk log.prepop.cpu2 
+	./startTime.awk log.prepop.cpu2
+	```
+	And yes, we get even faster start time (under half a second!):
+	```
 	Server initiated 1715359654960000256, up at 1715359655408000000 
 	Full start time is 448 ms
 	```
