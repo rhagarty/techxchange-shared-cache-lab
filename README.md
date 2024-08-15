@@ -12,39 +12,33 @@ server to measure the startup and memory use for both the [Eclipse Temurin JDK](
 
 ## Initial lab setup
 
-Although it's not recommended as common practice, this lab will run more
-smoothly for you if you invoke it as root. Login as root using the password provided in the Lab Guide:
-
-```bash
-su --login root
-```
-
 Set the current directory to the lab:
 ```bash
 cd /home/ibmuser/LabSharedCache/techxchange-share-cache-lab
 ```
 
-We will run the entire lab out of one redhat/ubi9 container that preinstalls the required software. In an effort to save time, we have built the container image for you (using the command `./main.build.sh`). You can verify this by running the following command:
+We will run the entire lab out of one redhat/ubi9 container that preinstalls the required software. In an effort to save time, we have already built the container image for you (using the command `sudo ./main.build.sh`). You can verify this by running the following command:
 
 ```bash
-podman images
+sudo podman images
 ```
 
 Which should list the image - `localhost/workshop/main`.
 
 > **WARNING**: Do not remove or delete this image. It will be needed to complete all of the sections within this lab. 
 
-Run the `workshop/main` image in a new container:
+Because we have already pre-built this image for you, you can go ahead and skip straight to running this image in a container. To run the `workshop/main` image in a new container, use the following command:
+
 
 ```bash
-./main.run.sh
+sudo ./main.run.sh
 ```
 
 > **NOTE**: You can peek inside that script to see that it just runs the following command:
 >```bash
 >podman run --network=host --privileged --name=workshop-main --replace -it workshop/main /bin/bash
 >```
-> This runs the image `workshop/main` in a brand new container named `workshop-main`. If that container already exists, it will delete and replace it. It will run in the host's network, and `-it` means a terminal with prompt will be created and run when the container is up and running.
+> This runs the image `workshop/main` in a brand new container named `workshop-main`. If that container currently exists, it will be deleted and replaced. The container will run in the host's network, and `-it` means a terminal with prompt will be started when the container is up and running.
 
 If all goes right, you should be running within the container. You should notice a new prompt.
 
@@ -109,10 +103,10 @@ Complete the following steps:
 
 	Look for the elapsed time to start the server. You'll see a line that ends with something like:: `The defaultServer server started in 3.043 seconds.`
 
-4. Go to another terminal window and log into the workshop container. Run the following command in another terminal window:
+4. Go to **another terminal window** and log into the workshop container. From the new terminal window, run the following command:
 
 	```bash
-	podman exec --privileged -it workshop-main /bin/bash
+	sudo podman exec --privileged -it workshop-main /bin/bash
 	```
 
 	This will connect to the running workshop container so that you can run another command there while the Liberty server is running.
@@ -499,7 +493,7 @@ Complete the following steps:
 
 ### Summary
 
-This is the last section of this part of the lab, so you can stop the podman stats command running in the other terminal window at this point by hitting `control-c` in that window. You can also exit the workshop container by typing `exit` in all container terminal windows.
+This is the last section of this part of the lab, so you can stop the podman stats command running in the other terminal window at this point by hitting `control-c` in that window. You can also exit the workshop container by typing `exit` in the container terminal window.
 
 In this section, we initially found very poor results due to a fairly common mistake activating the shared cache technology in Semeru Runtimes that seemed to paint a very dim picture. But when we properly configured the shared classes cache and prepopulated the cache in the container build step, we saw dramatically better startup and memory use with Semeru Runtimes. When running with a single CPU core, we found that compared to using Semeru Runtimes, the Temurin JDK will consume 88% more memory (68MB versus 36MB) and will start 94% slower (1152ms versus 593ms).
 
