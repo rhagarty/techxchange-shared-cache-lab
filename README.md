@@ -1,6 +1,6 @@
 # Hands-on Shared Classes Cache Lab
 
-In this lab, you will learn the benefits of shared classes case technology and how using Semeru Runtimes can help you run workloads that start 50% faster and consume 50% less memory.
+In this lab, you will learn the benefits of shared classes cache technology and how using Semeru Runtimes can help you run workloads that start 50% faster and consume 50% less memory.
 
 This lab is divided into 5 sections that each explore a different topic.
 
