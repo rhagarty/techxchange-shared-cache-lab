@@ -101,7 +101,7 @@ Complete the following steps:
 	podman run -p 9080:9080 --name=liberty_noscc --replace -it liberty_noscc
 	```
 
-	Look for the elapsed time to start the server. You'll see a line that ends with something like:: `The defaultServer server started in 3.043 seconds.`
+	Look for the elapsed time to start the server. You'll see a line that ends with something like:: `The defaultServer server started in 8.967 seconds.`
 
 4. Go to **another terminal window** and log into the workshop container. From the new terminal window, run the following command:
 
@@ -121,10 +121,10 @@ Complete the following steps:
 
 	```bash
 	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
-	b814b591a1da  liberty_noscc      3.44%       131MB / 2.047GB    6.40%       0B / 0B     0B / 0B     60          9.040596s   33.61%
+	b814b591a1da  liberty_noscc      2.44%       145MB / 8.025GB    1.81%       0B / 0B     0B / 0B     60          9.040596s   33.61%
 	```
 
-	This shows the Liberty server you started in Step 3 running with 131MB of memory. You can leave this podman stats command running for Step 7; it will update the list of active containers about every 5 seconds.
+	This shows the Liberty server you started in Step 3 running with 145MB of memory. You can leave this podman stats command running for Step 7; it will update the list of active containers about every 5 seconds.
 
 	>**IMPORTANT**: Leave this `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
@@ -168,19 +168,20 @@ Complete the following steps:
 	podman run --network=host --name=liberty_scc --replace -it liberty_scc
 	```
 
-	Look for the elapsed time to start the server. You'll see a line that ends with something like: `The defaultServer server started in 1.702 seconds.`
+	Look for the elapsed time to start the server. You'll see a line that ends with something like: `The defaultServer server started in 4.438 seconds.`
 
-	Comparing to the Liberty server we started in <b>Section_1</b>, this server using the prepopulated shared classes cache starts in about 55% of the time (1.702 seconds versus 3.043 seconds), a dramatic improvement!
+	Comparing to the Liberty server we started in <b>Section_1</b>, this server using the prepopulated shared classes cache starts in about 50% of the time (4.438 seconds versus 8.967 seconds), a dramatic improvement!
 
 4. Use the `podman stats` window from <b>Section_1</b> to observe the memory use of the container.
 
 	You should see something like:
 	
-	```
-	ID NAME CPU % MEM USAGE / LIMIT MEM % NET IO BLOCK IO PIDS CPU TIME AVG CPU % f6ecefd2dace liberty_scc 3.51% 97.9MB / 2.047GB 4.78% 0B / 0B 0B / 0B 59 4.626379s 15.75%
+	```bash
+	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
+	f6ecefd2dace  liberty_scc        2.52%       112.5MB / 8.025GB  1.46%       0B / 0B     0B / 0B     59          4.626379s   15.75%
 	```
 
-	This shows the Liberty server you started in Step 3 running with 98MB of memory. The memory use is lower because the shared memory used by the shared cache can be shared by multiple instances and so isn't counted as part of the memory use for the container. If you were to start a second, third, fourth, etc. server on the same machine connected to the same shared cache, there would be only one copy of the cache loaded in memory. Although it doesn't happen in this lab, it is pretty common in production deployments for multiple servers to be running on the same physical node so these savings are real even though completely subtracting it from the memory usage seems overboard especially with only one server running.
+	This shows the Liberty server you started in Step 3 running with 112MB of memory. The memory use is lower because the shared memory used by the shared cache can be shared by multiple instances and so isn't counted as part of the memory use for the container. If you were to start a second, third, fourth, etc. server on the same machine connected to the same shared cache, there would be only one copy of the cache loaded in memory. Although it doesn't happen in this lab, it is pretty common in production deployments for multiple servers to be running on the same physical node so these savings are real even though completely subtracting it from the memory usage seems overboard especially with only one server running.
 
 	>**IMPORTANT**: Leave the `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
@@ -230,10 +231,10 @@ Complete the following steps:
 
 	```
 	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
-	671f11639e46  tomcat_temurin     0.32%       67.28MB / 2.047GB  3.29%       0B / 0B          0B / 0B     31          1.25609s    7.83%
+	671f11639e46  tomcat_temurin     0.17%       91.28MB / 8.025GB  1/14%       0B / 0B     0B / 0B     31          1.25609s    7.83%
 	```
 
-	which shows the Tomcat server you started in Step 2 running with 67MB of memory. Tomcat is a lightweight server but less capabilities are loaded here than into the Liberty server you started in Sections 1 and 2, which explains at least part of the different in memory usage.
+	which shows the Tomcat server you started in Step 2 running with 91MB of memory. Tomcat is a lightweight server but less capabilities are loaded here than into the Liberty server you started in Sections 1 and 2, which explains at least part of the different in memory usage.
 
 	>**IMPORTANT**: Leave the `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
@@ -246,10 +247,10 @@ Complete the following steps:
 	Which should return a value similar to this:
 	```bash
 	Server initiated 1715355700320533504, up at 1715355701473000000
-	Full start time is 1152.47 ms
+	Full start time is 2695.35 ms
 	```
 
-	So the server started in roughly 1.15 seconds.
+	So the server started in roughly 2.7 seconds.
 
 	You can start the server a few more times, capturing the output to different log files so that you can get the start time for several runs, just to see the variation you experience. We aren't going to do a rigourous statistical analysis for this lab but that would obviously be important if you were going to start measuring server start time for your production workloads.
 
@@ -268,10 +269,10 @@ Complete the following steps:
 	Which should return a value similar to this:
 	```bash
 	Server initiated 1715356179088315648, up at 1715356179722000000
-	Full start time is 633.684 ms
+	Full start time is 1396.6 ms
 	```
 
-	As you can see, adding a second core helps reduce the startup time to 633ms, but you may also find that the memory consumption increases a bit (perhaps to 73MB).
+	As you can see, adding a second core helps cut the startup time in half, but you may also find that the memory consumption increases a bit.
 
 ### Summary
 
@@ -279,8 +280,8 @@ You should have measured performance somewhat along these lines:
 
 ```
 JDK Core limit Start time Memory usage after start: 
-Temurin 1 core 1152.47ms 68MB 
-Temurin 2 cores 633.684ms 73MB
+Temurin 1 core 2695.35ms 91MB 
+Temurin 2 cores 1396.6ms 82MB
 ```
 
 Move on to the next section to see what happens when we move to an IBM Semeru Runtimes JDK to run the Tomcat server with the same sample application.
@@ -320,7 +321,7 @@ Complete the following steps:
 	ef1846553ffb  tomcat_semeru.noscc 41.53%     41.73MB / 2.047GB  2.04%       0B / 0B     0B / 0B     35          2.011569s   41.53%
 	```
 
-	This shows the Tomcat server you started in Step 2 running with only 42MB of memory. Compared to starting Tomcat with Eclipse Temurin (with the HotSpot VM), when running this container uses about 40% less memory just by replacing the Temurin JDK with the Semeru Runtimes JDK.
+	This shows the Tomcat server you started in Step 2 running with only 42MB of memory. Compared to starting Tomcat with Eclipse Temurin (with the HotSpot VM), when running this container uses over 50% less memory just by replacing the Temurin JDK with the Semeru Runtimes JDK.
 
 	>**IMPORTANT**: Leave the `podman stats` command running for the other parts of this lab so you can keep watching the statistics for the containers you use.
 
@@ -338,10 +339,10 @@ Complete the following steps:
 	Which should return a value similar to this:
 	```bash
 	Server initiated 1715356585620868352, up at 1715356587598000000
-	Full start time is 1977.13 ms
+	Full start time is 4518.88 ms
 	```
 
-	This message shows the server started in just under 2 seconds, which is really a LOT longer than with Temurin! Don't fear, however, this isn't the best Semeru Runtimes can do.
+	This message shows the server started in just under 5 seconds, which is really a LOT longer than with Temurin! Don't fear, however, this isn't the best Semeru Runtimes can do.
 
 6. Before we improve on that time, however, first start and stop the server a few times and use the `startTime.awk` script to see how reliable this start time is. You can also try running with 2 cores to see what that does: 
   
@@ -351,8 +352,8 @@ Complete the following steps:
 
 	With 2 cores, the podman stats are: 
 	```
-	ID NAME CPU % MEM USAGE / LIMIT MEM % NET IO BLOCK IO PIDS CPU TIME AVG CPU % 
-	d6c64ea6596d tomcat_semeru.noscc 0.22% 42.09MB / 2.047GB 2.06% 0B / 0B 0B / 0B 36 2.186217s 11.56%
+	ID            NAME                CPU %      MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
+	ef1846553ffb  tomcat_semeru.noscc 0.22%      45.09MB / 8.0256GB 0.56%       0B / 0B     0B / 0B     35          2.011569s   5.56%
 	```
 
 	So not much change in memory usage, at least. How about the start time? 
@@ -363,19 +364,20 @@ Complete the following steps:
 
 	Which should return a value similar to this:
 	```bash
-	Server initiated 1715357245252879360, up at 1715357246401000000 Full start time is 1148.12 ms
+	Server initiated 1715357245252879360, up at 1715357246401000000 
+	Full start time is 2597.12 ms
 	```
 
 	Well, it improved dramatically, as you'd expect, and it's not as much behind Temurin as it was on one core. But it's still very far behind. Don't give up yet! In the next section, Semeru Runtimes will improve dramatically!
 
 ### Summary
 
-In this section we saw performance results like these:
+In this section we compared performance results from Semeru (Step 4) against Temurin (Step 3):
 
 ```
 JDK Core limit Start time Memory usage after start:
-Temurin 1 core 1152.47ms 68MB Semeru NOSCC 1 core 1977.13ms 42MB
-Temurin 2 cores 633.684ms 73MB Semeru NOSCC 2 cores 1148.12ms 42MB
+Temurin 1 core 2695.35ms 91MB Semeru NOSCC 1 core 4518.88ms 42MB
+Temurin 2 cores 1396.6ms 82MB Semeru NOSCC 2 cores 2597.12ms 45MB
 ```
 
 Move on to the next section to see what happens when we activate the Shared Classes Cache in IBM Semeru Runtimes and run the Tomcat server with the same sample application. You should see this picture reverse!
@@ -414,8 +416,8 @@ Complete the following steps:
 
 	This command shows various statistics about all containers running within the main workshop container. For example, you should see something like:
 	```bash
-	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
-	e564779194b2  tomcat_semeru.scc  0.57%       39.33MB / 2.047GB  1.92%       0B / 0B     8.192kB / 0B  35          5.275247s   45.62%
+	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO      PIDS        CPU TIME    AVG CPU %
+	e564779194b2  tomcat_semeru.scc  0.57%       39.33MB / 8.025GB  0.51%       0B / 0B     8.192kB / 0B  35          14.275247s  15.62%
 	```
 
 	As you can see, IBM Semeru Runtimes runs in even less memory than earlier (39MB versus the 42MB we saw earlier in <b>Section_4</b>). That's not as dramatic an improvement as we saw with the Liberty server, but let's ignore that fact for now. With this new memory footprint baseline, the Temurin JDK with the HotSpot JVM consumes 75% more memory to start the server.
@@ -428,7 +430,7 @@ Complete the following steps:
 	Which should return a value similar to this:
 	```bash
 	Server initiated 1715357831549004032, up at 1715357834783000000
-	Full start time is 3234 ms
+	Full start time is 8330 ms
 	```
 
 	Wow, what is going on here? That's already much slower than starting with Temurin and even slower than using Semeru Runtime without their (in?)famous shared cache technology! What's going on here?
@@ -456,8 +458,8 @@ Complete the following steps:
 
 	There is a memory improvement because the shared cache is now being used:
 	```
-	ID            NAME                      CPU %   MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
-	3e4994b07276  tomcat_semeru.prepop_scc  0.84%   35.94MB / 2.047GB  1.76%       0B / 0B     8.192kB / 0B  35        719.773ms   5.87%
+	ID            NAME                      CPU %   MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO      PIDS        CPU TIME    AVG CPU %
+	3e4994b07276  tomcat_semeru.prepop_scc  0.84%   37.12MB / 8.025GB  1.76%       0B / 0B     8.192kB / 0B  35          719.773ms   5.87%
 	```
 
 	Hit `control-c` to stop the server that you just started. Once you stop the server, we can check the start time using the `startTime.awk` script: 
@@ -468,7 +470,7 @@ Complete the following steps:
 	Which should return a value similar to this:
 	```bash
 	Server initiated 1715359356618435584, up at 1715359357211000000 
-	Full start time is 592.564 ms
+	Full start time is 1512.04 ms
 	```
 
 	Now that's more like it! You can do the same runs with 2 cores: 
@@ -477,38 +479,41 @@ Complete the following steps:
 	```
 
 	And see almost exactly the same memory usage: 
+	
 	```
-	ID NAME CPU % MEM USAGE / LIMIT MEM % NET IO BLOCK IO PIDS CPU TIME AVG CPU % 3adfe1f7ded9 tomcat_semeru.prepop_scc 0.97% 35.91MB / 2.047GB 1.75% 0B / 0B 0B / 0B 36 718.876ms 6.49%
+	ID            NAME                      CPU %   MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO      PIDS        CPU TIME    AVG CPU %
+	3e4994b07276  tomcat_semeru.prepop_scc  0.84%   37.96MB / 8.025GB  1.76%       0B / 0B     8.192kB / 0B  35          719.773ms   5.87%
 	```
 
 	Now lets see if we have improved:	
 	```bash
 	./startTime.awk log.prepop.cpu2
 	```
-	And yes, we get even faster start time (under half a second!):
+	And yes, we get even faster start time:
 	```
 	Server initiated 1715359654960000256, up at 1715359655408000000 
-	Full start time is 448 ms
+	Full start time is 1372.98 ms
 	```
 
 ### Summary
 
 This is the last section of this part of the lab, so you can stop the podman stats command running in the other terminal window at this point by hitting `control-c` in that window. You can also exit the workshop container by typing `exit` in the container terminal window.
 
-In this section, we initially found very poor results due to a fairly common mistake activating the shared cache technology in Semeru Runtimes that seemed to paint a very dim picture. But when we properly configured the shared classes cache and prepopulated the cache in the container build step, we saw dramatically better startup and memory use with Semeru Runtimes. When running with a single CPU core, we found that compared to using Semeru Runtimes, the Temurin JDK will consume 88% more memory (68MB versus 36MB) and will start 94% slower (1152ms versus 593ms).
+In this section, we initially found very poor results due to a fairly common mistake activating the shared cache technology in Semeru Runtimes that seemed to paint a very dim picture. But when we properly configured the shared classes cache and prepopulated the cache in the container build step, we saw dramatically better startup and memory use with Semeru Runtimes. When running with a single CPU core, we found that compared to using Semeru Runtimes, the Temurin JDK will consume over twice the memory (91MB versus 37MB) and will start 55% slower (2695ms versus 1512ms).
 
 Let's add the numbers to our performance summary table: 
 
 ```
 JDK Core limit Start time Memory usage after start:
-Temurin 1 core 1152.47ms 68MB 
-Semeru NOSCC 1 core 1977.13ms 42MB 
-Semeru SCC 1 core 3234ms 39MB 
-Semeru Prepop SCC 1 core 593ms 36MB
-Temurin 2 cores 633.684ms 73MB 
-Semeru NOSCC 2 cores 1148.12ms 42MB 
-Semeru SCC 2 cores 1624.24ms 39MB 
-Semeru Prepop SCC 2 cores 448ms 36MB
+Temurin 1 core 2695ms 91MB 
+Semeru NOSCC 1 core 4519ms 42MB 
+Semeru SCC 1 core 8330ms 39MB 
+Semeru Prepop SCC 1 core 1512ms 37MB
+
+Temurin 2 cores 1396ms 82MB 
+Semeru NOSCC 2 cores 2597ms 45MB 
+Semeru SCC 2 cores 5090ms 39MB 
+Semeru Prepop SCC 2 cores 1373ms 38MB
 ```
 
 ## Conclusion
