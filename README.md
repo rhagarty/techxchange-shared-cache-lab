@@ -14,7 +14,7 @@ server to measure the startup and memory use for both the [Eclipse Temurin JDK](
 
 Set the current directory to the lab:
 ```bash
-cd /home/ibmuser/LabSharedCache/techxchange-share-cache-lab
+cd /home/ibmuser/LabSharedCache/techxchange-shared-cache-lab
 ```
 
 We will run the entire lab out of one redhat/ubi9 container that preinstalls the required software. In an effort to save time, we have already built the container image for you (using the command `sudo ./main.build.sh`). You can verify this by running the following command:
